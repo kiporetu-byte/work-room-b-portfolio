@@ -34,6 +34,10 @@
 
 - MySQL
 
+### 認証機能
+
+- JWT
+
 ### 開発環境
 
 - Docker（Backend + DB）

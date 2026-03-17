@@ -1,8 +1,11 @@
+
 from fastapi import FastAPI, HTTPException, status, Depends
+from sqlalchemy import  text
+import os
 from passlib.context import CryptContext 
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from database import get_db, engine
+from db import get_db, engine
 import models 
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timedelta
@@ -15,6 +18,14 @@ SECRET_KEY = "your-secret-key-share-with-partner"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 # 1時間有効
 
+# DB接続用ライブラリ
+import time
+from sqlalchemy.exc import OperationalError
+from db import engine
+from models import Base
+from seed import run_seed
+
+
 # --- 設定と準備 ---
 
 app = FastAPI(title="記事共有アプリ API")
@@ -26,6 +37,22 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# DBテーブル作成（起動時）
+@app.on_event("startup")
+def startup():
+    for i in range(10):
+        try:
+            Base.metadata.create_all(bind=engine)
+            print("DB 接続されました！！")
+
+            run_seed()
+            
+            break
+        except OperationalError:
+            print("DB 接続中...")
+            time.sleep(2)
+
 
 # パスワードハッシュ化の設定
 pwd_context = CryptContext(
@@ -84,9 +111,12 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
 # --- エンドポイント（窓口） ---
 
+DATABASE_URL = os.getenv("DATABASE_URL")
+
 @app.get("/")
-def read_root():
-    return {"message": "APIは正常に起動しています！ /docs にアクセスしてね"}
+# DB接続確認用
+def root():
+    return{"message":"API running"}
 
 # 1. 記事一覧を取得する (Read)
 @app.get("/posts")
@@ -166,3 +196,4 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
     # 本物のJWTを発行！
     access_token = create_access_token(data={"sub": user.email, "user_id": user.id})
     return {"access_token": access_token, "token_type": "bearer"}
+

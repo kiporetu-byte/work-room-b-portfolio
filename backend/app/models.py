@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.sql import func
-from database import Base
+from db import Base
 
 # --- users テーブル ---
 class User(Base):

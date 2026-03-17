@@ -4,12 +4,18 @@ from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-db = SessionLocal()
-
 def hash_password(password):
     return pwd_context.hash(password)
 
-def seed_users():
+def run_seed():
+    db = SessionLocal()
+
+    #すでにユーザーが入ればデータ流し込みしない
+    if db.query(User).first():
+        print("既にデータが存在するので中止しました")
+        db.close()
+        return
+
     users = [
         User(name="かみえり", email="kami@test.com", password=hash_password("password1")),
         User(name="かんちゃん", email="kan@test.com", password=hash_password("password2")),
@@ -19,7 +25,6 @@ def seed_users():
     db.add_all(users)
     db.commit()
 
-def seed_articles():
     articles = [
         Article(user_id=1, url="https://fastapi.tiangolo.com", memo="FastAPI公式"),
         Article(user_id=1, url="https://docs.sqlalchemy.org", memo="ORMの理解"),
@@ -31,7 +36,5 @@ def seed_articles():
     db.add_all(articles)
     db.commit()
 
-if __name__ == "__main__":
-    seed_users()
-    seed_articles()
     db.close()
+    print("初期値データ流し込み完了")

@@ -9,6 +9,7 @@ import time
 from sqlalchemy.exc import OperationalError
 from db import engine
 from models import Base
+from seed import run_seed
 
 
 # --- 設定と準備 ---
@@ -22,6 +23,9 @@ def startup():
         try:
             Base.metadata.create_all(bind=engine)
             print("DB 接続されました！！")
+
+            run_seed()
+            
             break
         except OperationalError:
             print("DB 接続中...")

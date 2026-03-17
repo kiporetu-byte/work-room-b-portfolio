@@ -1,3 +1,5 @@
+from sqlalchemy import create_engine, text
+import os
 from fastapi import FastAPI, HTTPException, status
 from passlib.context import CryptContext 
 from pydantic import BaseModel
@@ -30,7 +32,17 @@ def verify_password(plain_password, hashed_password):
 
 # --- エンドポイント（窓口） ---
 
+DATABASE_URL = os.getenv("DATABASE_URL")
+
 @app.get("/")
+def root():
+    try:
+        engine = create_engine(DATABASE_URL)
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        return {"message": "DB connected"}
+    except Exception as e:
+        return {"error": str(e)}
 def read_root():
     return {"message": "APIは正常に起動しています！ /docs にアクセスしてね"}
 

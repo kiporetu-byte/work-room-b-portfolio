@@ -69,10 +69,19 @@ export default function MyPage() {
             key={post.id}
             className="border rounded p-4 shadow-sm space-y-2"
           >
-            <p className="font-bold">{post.url}</p>
+            <p className="text-sm text-gray-500">投稿者:{post.user_id}</p>
+            <p className="text-sm text-gray-400">
+              投稿日:{" "}
+              {new Date(post.created_at).toLocaleString("ja-JP", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
             <p>{post.memo}</p>
-            <p className="text-sm text-gray-500">user:{post.user_id}</p>
-            <p className="text-sm text-gray-400">{post.created_at}</p>
+            <p className="font-bold">{post.url}</p>
 
             <div className="flex gap-3">
               <Link href={`/articles/${post.id}/edit`}>

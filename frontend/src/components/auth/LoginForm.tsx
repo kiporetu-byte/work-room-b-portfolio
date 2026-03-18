@@ -1,105 +1,62 @@
 "use client";
 
 import { useState } from "react";
-//成功時に token を localStorage に保存して /mypage に遷移
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  //JWT保存処理実装
   const router = useRouter();
 
-const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  console.log("① submit開始");
-  setErrorMessage("");
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("① submit開始");
+    setErrorMessage("");
 
-  if (!email || !password) {
-    console.log("② 未入力でreturn");
-    setErrorMessage("メールアドレスとパスワードを入力してください。");
-    return;
-  }
-
-  try {
-    console.log("③ fetch前", { email, password });
-
-    const response = await fetch("http://localhost:8000/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password
-      })
-    });
-
-    console.log("④ response受け取り", response.status, response.ok);
-
-    const data = await response.json();
-    console.log("⑤ json受け取り", data);
-
-    if (!response.ok) {
-      console.log("⑥ response.ok が false");
-      setErrorMessage(data.detail || "メールアドレスとパスワードが違います");
+    if (!email || !password) {
+      console.log("② 未入力でreturn");
+      setErrorMessage("メールアドレスとパスワードを入力してください。");
       return;
     }
 
-    console.log("⑦ success分岐に入った");
-    localStorage.setItem("token", data.token);
-    console.log("⑧ token保存後", localStorage.getItem("token"));
+    try {
+      console.log("③ fetch前", { email, password });
 
-    router.push("/mypage");
-    console.log("⑨ push後");
+      const response = await fetch("http://localhost:8000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
 
-  } catch (error) {
-    console.error("⑩ catchに入った", error);
-    setErrorMessage("通信エラーが発生しました");
-  }
-};
+      console.log("④ response受け取り", response.status, response.ok);
 
-  if (!email || !password) {
-    setErrorMessage("メールアドレスとパスワードを入力してください。");
-    return;
-  }
+      const data = await response.json();
+      console.log("⑤ json受け取り", data);
 
-  try {
-    const response = await fetch("http://localhost:8000/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password
-      })
-    });
+      if (!response.ok) {
+        console.log("⑥ response.ok が false");
+        setErrorMessage(data.detail || "メールアドレスとパスワードが違います");
+        return;
+      }
 
-    const data = await response.json();
-    console.log("status:", response.status);
-    console.log("data:", data);
+      console.log("⑦ success分岐に入った");
+      localStorage.setItem("token", data.token);
+      console.log("⑧ token保存後", localStorage.getItem("token"));
 
-
-    if (!response.ok) {
-      setErrorMessage(data.detail || "ログインに失敗しました");
-      return;
+      router.push("/mypage");
+      console.log("⑨ push後");
+    } catch (error) {
+      console.error("⑩ catchに入った", error);
+      setErrorMessage("通信エラーが発生しました");
     }
+  };
 
-    console.log("login success:", data);
-
-    //JWT保存処理実装
-    localStorage.setItem("token", data.token);
-    router.push("/mypage");
-
-  } catch (error) {
-    console.error(error);
-    setErrorMessage("通信エラーが発生しました");
-  }
-};
-
-//UI
   return (
     <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-xl p-6 space-y-4">
       <div>
@@ -130,9 +87,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         />
       </div>
 
-      {errorMessage && (
-        <p className="text-sm text-red-500">{errorMessage}</p>
-      )}
+      {errorMessage && <p className="text-sm text-red-500">{errorMessage}</p>}
 
       <button
         type="submit"

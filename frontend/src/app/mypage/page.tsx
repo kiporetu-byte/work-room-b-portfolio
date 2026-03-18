@@ -5,18 +5,36 @@
 import Link from "next/link";
 import Button from "@/components/common/Button";
 import { useEffect, useState } from "react";
+import { getPosts, savePosts, Post } from "@/lib/mockPosts";
+// import { getPosts } from "@/lib/api";　//api繋げるまで一旦コメントアウト
+// import { Post } from "@/types/article"; //api繋げるまで一旦コメントアウト
 //ログアウト処理
 import { useRouter } from "next/navigation";
 //import { getPosts } from "@/lib/api";
 import { Post } from "@/types/article";
+// import { useRouter } from "next/navigation";
 
 // 認証状態確認（仮）
 // ログイン成功時に保存された JWT(token) を確認
 // 今後ここで認証ガードを実装予定
 export default function MyPage() {
+  const [posts, setPosts] = useState<Post[]>([]);
 
+
+  useEffect(() => {
+    const data = getPosts();
+    setPosts(data);
+  }, []);
+
+  const handleDelete = (id: number) => {
+    const newPosts = posts.filter((p) => p.id !== id);
+    savePosts(newPosts);
+    setPosts(newPosts);
+  };
+
+  // かみえりさんのコード↓
   //ログアウト処理
-  const router = useRouter();
+  // const router = useRouter();
 
   // 一旦ダミーデータで表示のためコメントアウト
   // const [posts, setPosts] = useState<Post[]>([]);
@@ -51,7 +69,6 @@ export default function MyPage() {
   //   });
   // }, []);
 
-
   //認証状態確認（仮）localStorage に保存された JWT(token) を取得して確認
   // 今後は token が無い場合に /login へリダイレクトする認証ガードを実装予定
   useEffect(() => {
@@ -65,8 +82,6 @@ export default function MyPage() {
     localStorage.removeItem("token");
     router.push("/login");
 
-    // routes.ts を使用
-    //router.push(ROUTES.login);
   };
 
 
@@ -100,16 +115,30 @@ export default function MyPage() {
             key={post.id}
             className="border rounded p-4 shadow-sm space-y-2"
           >
-            <p className="font-bold">{post.url}</p>
+            <p className="text-sm text-gray-500">投稿者:{post.user_id}</p>
+            <p className="text-sm text-gray-400">
+              投稿日:{" "}
+              {new Date(post.created_at).toLocaleString("ja-JP", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
             <p>{post.memo}</p>
+            <p className="font-bold">{post.url}</p>
             <p className="text-sm text-gray-500">{post.user_id}</p>
 
             <div className="flex gap-3">
-              <Link href={`/posts/${post.id}/edit`}>
+              <Link href={`/articles/${post.id}/edit`}>
                 <Button>編集</Button>
               </Link>
 
-              <button className="px-4 py-2 rounded bg-red-600 text-white hover:opacity-90">
+              <button
+                onClick={() => handleDelete(post.id)}
+                className="px-4 py-2 rounded bg-red-600 text-white hover:opacity-90"
+              >
                 削除
               </button>
             </div>

@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Button from "@/components/common/Button";
-import { getPosts, savePosts } from "@/lib/mockPosts";
+import { updatePost } from "./api-edit";
 
 export default function EditPage() {
   const params = useParams();
@@ -11,30 +11,36 @@ export default function EditPage() {
 
   const router = useRouter();
 
+  const [memo, setMemo] = useState("");
   const [url, setUrl] = useState("");
-  const [description, setDescription] = useState("");
 
-  // 初期表示
+  // ユーザー認証確認
   useEffect(() => {
-    const posts = getPosts();
-    const target = posts.find((p) => p.id === Number(id));
+    const token = localStorage.getItem("token");
 
-    if (target) {
-      setUrl(target.url);
-      setDescription(target.memo);
+    if (!token) {
+      router.push("/login");
     }
-  }, [id]);
+  }, []);
 
   // 更新処理
-  const handleUpdate = () => {
-    const posts = getPosts();
+  const handleUpdate = async () => {
+    const token = localStorage.getItem("token");
 
-    const updated = posts.map((p) =>
-      p.id === Number(id) ? { ...p, url, memo: description } : p,
-    );
+    if (!token) {
+      alert("ログインしてください");
+      router.push("/login");
+      return;
+    }
 
-    savePosts(updated);
-    router.push("/mypage");
+    try {
+      await updatePost(id, url, memo, token);
+
+      router.push("/mypage");
+    } catch (error) {
+      console.error(error);
+      alert("更新に失敗しました");
+    }
   };
 
   return (
@@ -51,8 +57,8 @@ export default function EditPage() {
 
         <textarea
           className="w-full border p-2 rounded"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          value={memo}
+          onChange={(e) => setMemo(e.target.value)}
         />
 
         <Button onClick={handleUpdate}>更新する</Button>

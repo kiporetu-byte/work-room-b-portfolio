@@ -1,6 +1,6 @@
 "use client";
 
-import { ROUTES } from "@/constants/routes";
+//import { ROUTES } from "@/constants/routes";
 
 import Link from "next/link";
 import Button from "@/components/common/Button";
@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 //ログアウト処理
 import { useRouter } from "next/navigation";
 //import { getPosts } from "@/lib/api";
-//import { Post } from "@/types/article";
+import { Post } from "@/types/article";
 
 // 認証状態確認（仮）
 // ログイン成功時に保存された JWT(token) を確認
@@ -20,19 +20,19 @@ export default function MyPage() {
 
   // 一旦ダミーデータで表示のためコメントアウト
   // const [posts, setPosts] = useState<Post[]>([]);
-  const [posts, setPosts] = useState([
+  const [posts, setPosts] = useState<Post[]>([
     {
       id: 1,
       url: "https://example.com",
-      description: "Reactの勉強にめっちゃ良かった記事",
-      username: "tanaka",
+      memo: "Reactの勉強にめっちゃ良かった記事",
+      user_id: "tanaka",
       created_at: "2024-01-01",
     },
     {
       id: 2,
       url: "https://nextjs.org",
-      description: "Next.js公式ドキュメント",
-      username: "sato",
+      memo: "Next.js公式ドキュメント",
+      user_id: "sato",
       created_at: "2024-01-02",
     },
   ]);
@@ -63,10 +63,10 @@ export default function MyPage() {
   // localStorage から token を削除してログイン画面へ戻す
   const handleLogout = () => {
     localStorage.removeItem("token");
-    //router.push("/login");
+    router.push("/login");
 
     // routes.ts を使用
-    router.push(ROUTES.login);
+    //router.push(ROUTES.login);
   };
 
 
@@ -77,15 +77,11 @@ export default function MyPage() {
 
         <div className="flex gap-3">
 
-          {/*<Link href={ROUTES.top}>
-            <Button>トップへ戻る</Button>
-          </Link>*/}
-
           {/* URLを直接指定の書き方 */}
-          {/* <Link href="/articles/new"> */}
+          <Link href="/articles/new"> 
 
-          {/* routes.ts を使用した書き方 */}
-          <Link href={ROUTES.newArticle}>
+          {/* routes.ts を使用した書き方 
+          <Link href={ROUTES.newArticle}*/}
             <Button>記事登録</Button>
           </Link>
          
@@ -105,8 +101,8 @@ export default function MyPage() {
             className="border rounded p-4 shadow-sm space-y-2"
           >
             <p className="font-bold">{post.url}</p>
-            <p>{post.description}</p>
-            <p className="text-sm text-gray-500">{post.username}</p>
+            <p>{post.memo}</p>
+            <p className="text-sm text-gray-500">{post.user_id}</p>
 
             <div className="flex gap-3">
               <Link href={`/posts/${post.id}/edit`}>

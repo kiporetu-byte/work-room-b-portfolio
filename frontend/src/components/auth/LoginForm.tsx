@@ -11,13 +11,6 @@ export default function LoginForm() {
   //JWT保存処理実装
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-
-  console.log("① submit開始");
-
-  setErrorMessage("");
-
 const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
   console.log("① submit開始");
@@ -50,7 +43,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
     if (!response.ok) {
       console.log("⑥ response.ok が false");
-      setErrorMessage(data.detail || "ログインに失敗しました");
+      setErrorMessage(data.detail || "メールアドレスとパスワードが違います");
       return;
     }
 

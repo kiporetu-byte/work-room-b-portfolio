@@ -6,7 +6,12 @@ import { useEffect, useState } from "react";
 import { getPosts, savePosts, Post } from "@/lib/mockPosts";
 // import { getPosts } from "@/lib/api";　//api繋げるまで一旦コメントアウト
 // import { Post } from "@/types/article"; //api繋げるまで一旦コメントアウト
+//ログアウト処理
+// import { useRouter } from "next/navigation";
 
+// 認証状態確認（仮）
+// ログイン成功時に保存された JWT(token) を確認
+// 今後ここで認証ガードを実装予定
 export default function MyPage() {
   const [posts, setPosts] = useState<Post[]>([]);
 
@@ -39,6 +44,30 @@ export default function MyPage() {
     setPosts(newPosts);
   };
 
+  // かみえりさんのコード↓
+  //ログアウト処理
+  const router = useRouter();
+
+  // 一旦ダミーデータで表示のためコメントアウト
+  // const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState([
+    {
+      id: 1,
+      url: "https://example.com",
+      description: "Reactの勉強にめっちゃ良かった記事",
+      username: "tanaka",
+      created_at: "2024-01-01",
+    },
+    {
+      id: 2,
+      url: "https://nextjs.org",
+      description: "Next.js公式ドキュメント",
+      username: "sato",
+      created_at: "2024-01-02",
+    },
+  ]);
+  // ここまで↑
+
   // 一旦ダミーデータで表示のためコメントアウト
   // useEffect(() => {
   //   const token = localStorage.getItem("token");
@@ -54,13 +83,37 @@ export default function MyPage() {
   //   });
   // }, []);
 
+  //認証状態確認（仮）localStorage に保存された JWT(token) を取得して確認
+  // 今後は token が無い場合に /login へリダイレクトする認証ガードを実装予定
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    console.log("token:", token);
+  }, []);
+
+  //ログアウト処理
+  // localStorage から token を削除してログイン画面へ戻す
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    router.push("/login");
+  };
+
   return (
     <main className="p-6 space-y-6">
       <section className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">mypage</h1>
-        <Link href="/articles/new">
-          <Button>記事登録</Button>
-        </Link>
+
+        <div className="flex gap-3">
+          <Link href="/articles/new">
+            <Button>記事登録</Button>
+          </Link>
+
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 rounded bg-gray-600 text-white hover:opacity-90"
+          >
+            ログアウト
+          </button>
+        </div>
       </section>
 
       <section className="space-y-4">

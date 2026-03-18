@@ -6,6 +6,9 @@ import { useEffect, useState } from "react";
 import { getPosts } from "@/lib/api";
 import { Post } from "@/types/article";
 
+// 認証状態確認（仮）
+// ログイン成功時に保存された JWT(token) を確認
+// 今後ここで認証ガードを実装予定
 export default function MyPage() {
   // 一旦ダミーデータで表示のためコメントアウト
   // const [posts, setPosts] = useState<Post[]>([]);
@@ -39,6 +42,14 @@ export default function MyPage() {
   //     setPosts(data);
   //   });
   // }, []);
+
+  //認証状態確認（仮）：localStorage に保存された JWT(token) を取得して確認
+  // 今後は token が無い場合に /login へリダイレクトする認証ガードを実装予定
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    console.log("token:", token);
+  }, []);
+
 
   return (
     <main className="p-6 space-y-6">

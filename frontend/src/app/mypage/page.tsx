@@ -30,7 +30,14 @@ export default function MyPage() {
       return;
     }
 
-    fetchPosts(token);
+    (async () => {
+      try {
+        const data = await getMyPosts(token);
+        setPosts(data);
+      } catch (error) {
+        console.error(error);
+      }
+    })();
   }, []);
 
   // 削除処理

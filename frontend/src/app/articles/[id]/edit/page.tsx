@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Button from "@/components/common/Button";
-import { updatePost } from "./api-edit";
+import { getPost, updatePost } from "./api-edit";
 
 export default function EditPage() {
   const params = useParams();
@@ -18,24 +18,22 @@ export default function EditPage() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    if (!token) {
-      router.push("/login");
-    }
-  }, []);
+    if (!token) return;
+
+    getPost(id, token).then((data) => {
+      setUrl(data.url);
+      setMemo(data.memo);
+    });
+  }, [id]);
 
   // 更新処理
   const handleUpdate = async () => {
     const token = localStorage.getItem("token");
 
-    if (!token) {
-      alert("ログインしてください");
-      router.push("/login");
-      return;
-    }
+    if (!token) return;
 
     try {
       await updatePost(id, url, memo, token);
-
       router.push("/mypage");
     } catch (error) {
       console.error(error);

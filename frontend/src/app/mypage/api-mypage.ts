@@ -2,7 +2,7 @@ const BASE_URL = "http://localhost:8000";
 
 // 自分の投稿取得
 export async function getMyPosts(token: string) {
-  const res = await fetch(`${BASE_URL}/posts`, {
+  const res = await fetch(`${BASE_URL}/my-posts`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

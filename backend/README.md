@@ -58,4 +58,6 @@ docker compose exec -it backend_db mysql -u root -p articles_db
 └── requirements.txt
 ```
 
-## Ruff規約
+# 今後の改善
+
+- main.pyの分離

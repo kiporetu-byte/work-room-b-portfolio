@@ -125,6 +125,37 @@ def get_posts(db: Session = Depends(get_db)):
     articles = db.query(models.Article).all()
     return articles
 
+# 1-2. 特定の記事を1つだけ取得する (ガードマン付き)
+@app.get("/posts/{post_id}")
+def get_post(
+    post_id: int, 
+    db: Session = Depends(get_db),
+    current_user_id: int = Depends(get_current_user) # ← ガードマン登場！
+):
+    # 記事を探す（かつ、自分の投稿であることも条件に加える）
+    target = db.query(models.Article).filter(
+        models.Article.id == post_id,
+        models.Article.user_id == current_user_id # ← ここがポイント！
+    ).first()
+    
+    if not target:
+        # 記事がないか、自分のものではない場合は 404（見つからない）を返す
+        raise HTTPException(status_code=404, detail="指定された記事が見つかりません")
+    
+    return target
+
+# 1-3. 自分の投稿だけをすべて取得する (マイページ用)
+@app.get("/my-posts")
+def get_my_posts(
+    db: Session = Depends(get_db), 
+    current_user_id: int = Depends(get_current_user)
+):
+    # ログインしている自分の ID に一致する記事だけを返す
+    articles = db.query(models.Article).filter(
+        models.Article.user_id == current_user_id
+    ).all()
+    return articles
+
 # 2. 記事を新しく投稿する (ガードマン設置版)
 @app.post("/posts")
 def create_post(

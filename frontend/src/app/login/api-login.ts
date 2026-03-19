@@ -24,6 +24,8 @@ export const loginApi = async ({
   });
 
   const data = await response.json();
+  //console.log("login response status:", response.status);
+  //console.log("login response data:", data);
 
   if (!response.ok) {
     throw new Error(data.detail || "ログインに失敗しました");

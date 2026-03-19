@@ -12,30 +12,30 @@ export default function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("① submit開始");
+    //console.log("① submit開始");
     setErrorMessage("");
 
     if (!email || !password) {
-      console.log("② 未入力でreturn");
+      //console.log("② 未入力でreturn");
       setErrorMessage("メールアドレスとパスワードを入力してください。");
       return;
     }
 
     try {
-      console.log("③ loginApi実行前", { email, password });
+      //console.log("③ loginApi実行前", { email, password });
 
       const data = await loginApi({ email, password });//UIと認証処理担当
 
-      console.log("④ loginApi結果", data);
+      //console.log("④ loginApi結果", data);
 
-      console.log("⑤ success分岐に入った");
+      //console.log("⑤ success分岐に入った");
       localStorage.setItem("token", data.access_token); // JWT保存
-      console.log("⑥ token保存後", localStorage.getItem("token"));
+      //console.log("⑥ token保存後", localStorage.getItem("token"));
 
       router.push("/mypage");//UIと認証処理担当
-      console.log("⑦ push後");
+      //console.log("⑦ push後");
     } catch (error) {
-      console.error("⑧ catchに入った", error);
+      //console.error("⑧ catchに入った", error);
 
       if (error instanceof Error) {
         setErrorMessage(error.message);
@@ -53,8 +53,11 @@ export default function LoginForm() {
         </label>
         <input
           id="email"
+          name="nope-email"
           type="email"
-          autoComplete="off"
+          autoComplete="new-password"
+          readOnly
+          onFocus={(e) => e.currentTarget.removeAttribute("readonly")}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full border rounded-lg px-3 py-2"
@@ -68,7 +71,11 @@ export default function LoginForm() {
         </label>
         <input
           id="password"
+          name="nope-password"
           type="password"
+          autoComplete="new-password"
+          readOnly
+          onFocus={(e) => e.currentTarget.removeAttribute("readonly")}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="w-full border rounded-lg px-3 py-2"

@@ -57,3 +57,7 @@ docker compose exec -it backend_db mysql -u root -p articles_db
 ├── README.md
 └── requirements.txt
 ```
+
+# 今後の改善
+
+- main.pyの分離

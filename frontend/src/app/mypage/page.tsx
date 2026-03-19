@@ -5,17 +5,22 @@
 import Link from "next/link";
 import Button from "@/components/common/Button";
 import { useEffect, useState } from "react";
+<<<<<<< HEAD
 import { getPosts, savePosts } from "@/lib/mockPosts";
 import { Post } from "@/types/article";
 import { useRouter } from "next/navigation";
+=======
+import { getMyPosts, deletePost } from "./api-mypage";
+import { useRouter } from "next/navigation";
+import { Post } from "@/types/article";
+>>>>>>> develop
 
-// 認証状態確認（仮）
-// ログイン成功時に保存された JWT(token) を確認
-// 今後ここで認証ガードを実装予定
 export default function MyPage() {
   const router = useRouter();
   const [posts, setPosts] = useState<Post[]>([]);
+  const router = useRouter();
 
+<<<<<<< HEAD
   useEffect(() => {
     const token = localStorage.getItem("token");
     console.log("token:", token);
@@ -32,6 +37,54 @@ export default function MyPage() {
 
   // ログアウト処理
   // localStorage から token を削除してログイン画面へ戻す
+=======
+  // 投稿取得
+  const fetchPosts = async (token: string) => {
+    try {
+      const data = await getMyPosts(token);
+      setPosts(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // 認証ガード
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+
+    (async () => {
+      try {
+        const data = await getMyPosts(token);
+        setPosts(data);
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  }, []);
+
+  // 削除処理
+  const handleDelete = async (id: number) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) return;
+
+    try {
+      await deletePost(id, token);
+
+      setPosts(posts.filter((p) => p.id !== id));
+    } catch (error) {
+      console.error(error);
+      alert("削除に失敗しました");
+    }
+  };
+
+  // ログアウト
+>>>>>>> develop
   const handleLogout = () => {
     localStorage.removeItem("token");
     router.push("/login");

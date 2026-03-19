@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { loginApi } from "../../app/login/api-login";
+//成功時に token を localStorage に保存して /mypage に遷移
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -46,7 +47,10 @@ export default function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-xl p-6 space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white shadow-md rounded-xl p-6 space-y-4"
+    >
       <div>
         <label htmlFor="email" className="block text-sm font-medium mb-1">
           メールアドレス

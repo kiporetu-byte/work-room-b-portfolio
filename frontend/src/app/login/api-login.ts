@@ -1,13 +1,16 @@
+//ログインAPIのリクエスト型
 export type LoginRequest = {
   email: string;
   password: string;
 };
 
+//ログインAPIのレスポンス型（JWNトークンを受け取る）
 export type LoginResponse = {
   access_token: string;
   token_type: string;
 };
 
+//ログインAPIを呼び出す関数
 export const loginApi = async ({
   email,
   password,
@@ -17,6 +20,7 @@ export const loginApi = async ({
     headers: {
       "Content-Type": "application/json",
     },
+    //ログイン情報をJSON式で送信
     body: JSON.stringify({
       email,
       password,

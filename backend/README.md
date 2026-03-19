@@ -57,5 +57,3 @@ docker compose exec -it backend_db mysql -u root -p articles_db
 ├── README.md
 └── requirements.txt
 ```
-
-## Ruff規約

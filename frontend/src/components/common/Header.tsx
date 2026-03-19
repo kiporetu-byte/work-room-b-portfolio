@@ -9,9 +9,7 @@ export default function Header() {
         </h1>
 
         <nav className="flex gap-4">
-          <Link href="/mypage">MyPage</Link>
-          <Link href="/articles/new">New Article</Link>
-          <Link href="/login">Login</Link>
+          <Link href="/login">ログイン</Link>
         </nav>
       </div>
     </header>
